@@ -1,14 +1,36 @@
-// Student list
+/* -+-+-+----------------------+-+-+-
+Basic Data - Student List
+-+-+-+----------------------+-+-+- */
+
 var studentList = document.getElementById('student-list').children;
+
+/* -+-+-+----------------------+-+-+-
+Calling functions at load time
+-+-+-+----------------------+-+-+- */
+
+addSearchBox(searchBoxCreater());
+appendPageLinks(studentList);
+showPage(studentList, 1);
+
+/* -+-+-+----------------------+-+-+-
+Main Functions
+-+-+-+----------------------+-+-+- */
 
 // Displays page of 10 students based on page number selected
 function showPage(aStudentList, pageNumber) {
     removeStudents();
     var upperBound = (pageNumber * 10) - 1;
     var lowerBound = (pageNumber - 1) * 10;
-    for (var j = lowerBound; j <= upperBound; j++) {
-        if (aStudentList[j]) {
-            aStudentList[j].style.display = "block";
+    var selectionArray = [];
+    for (var k = lowerBound; k <= upperBound; k++) {
+        if (aStudentList[k]) {
+            selectionArray.push(aStudentList[k]);
+        }
+    }
+    for (var j = 0; j < selectionArray.length; j++) {
+        selectionArray[j].style.display = "block";
+        if (j === selectionArray.length - 1) {
+            selectionArray[j].style.borderBottom = "none";
         }
     }
 
@@ -51,19 +73,52 @@ function appendPageLinks(aStudentList) {
 
 }
 
-function removeActiveState() {
-    var elements = document.getElementsByClassName('active');
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].className = '';
+// Search Function for searching through students to display
+function searchList(inputValue) {
+    removeStudents();
+    removePagination();
+    removeActiveState();
+    if (document.querySelector('.message')) {
+        document.querySelector('.message').remove();
     }
-
+    var matchedList = [];
+    for (var i = 0; i < studentList.length; i++) {
+        var name = studentList[i].querySelector('h3').innerHTML;
+        var email = studentList[i].querySelector('.email').innerHTML;
+        if (name.includes(inputValue) || email.includes(inputValue)) {
+            matchedList.push(studentList[i]);
+        }
+    }
+    if (matchedList.length === 0) {
+        var pageHeader = document.getElementById('page-header');
+        var message = document.createElement('p');
+        pageHeader.style.position = "relative";
+        message.className = "message";
+        message.style.display = "block";
+        message.style.position = "absolute";
+        message.style.top = "70px";
+        message.style.fontSize = "1.2rem";
+        message.style.color = "#4ba6c3";
+        message.innerHTML = 'no students found';
+        pageHeader.appendChild(message);
+    }
+    if (matchedList.length > 10) {
+        appendPageLinks(matchedList);
+    }
+    showPage(matchedList, 1);
 }
 
+/* -+-+-+----------------------+-+-+-
+Helper Functions
+-+-+-+----------------------+-+-+- */
+
+// add search box to page
 function addSearchBox(searchBox) {
     var pageHeader = document.getElementById('page-header');
     pageHeader.appendChild(searchBox);
 }
 
+// create search box
 function searchBoxCreater() {
     var searchContainer = document.createElement('div');
     searchContainer.className = "student-search";
@@ -81,36 +136,14 @@ function searchBoxCreater() {
     return searchContainer;
 }
 
-function searchList(inputValue) {
-    removeStudents();
-    removePagination();
-    removeActiveState();
-    var matchedList = [];
-    for (var i = 0; i < studentList.length; i++) {
-        var name = studentList[i].querySelector('h3').innerHTML;
-        var email = studentList[i].querySelector('.email').innerHTML;
-        if (name.includes(inputValue) || email.includes(inputValue)) {
-            matchedList.push(studentList[i]);
-        }
-    }
-    if (matchedList.length === 0) {
-        var pageHeader = document.getElementById('page-header');
-        var message = document.createElement('p');
-        message.innerHTML = 'no students found';
-        pageHeader.appendChild(message);
-    }
-    if (matchedList.length > 10) {
-        appendPageLinks(matchedList);
-    }
-    showPage(matchedList, 1);
-}
-
+// hide students
 function removeStudents() {
     for (var i = 0; i < studentList.length; i++) {
         studentList[i].style.display = "none";
     }
 }
 
+// remove pagination from dom
 function removePagination() {
     if (document.querySelector('.pagination')) {
         var pagination = document.querySelector('.pagination');
@@ -118,6 +151,11 @@ function removePagination() {
     }
 }
 
-addSearchBox(searchBoxCreater());
-appendPageLinks(studentList);
-showPage(studentList, 1);
+// remove active class from pagination link
+function removeActiveState() {
+    var elements = document.getElementsByClassName('active');
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].className = '';
+    }
+
+}

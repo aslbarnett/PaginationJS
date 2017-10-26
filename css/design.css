@@ -40,7 +40,8 @@ body{
       padding: 8px 15px;
       font-size: 14px;
       background-color: #4ba6c3;
-      color: #fff
+      color: #fff;
+      margin-left: 5px;
     }
 
 .student-list{}
@@ -110,6 +111,7 @@ body{
       padding: 3px 8px;
       text-decoration: none;
       color: #4ba6c3;
+      margin-left: 5px;
     }
 
     .pagination li a.active,
