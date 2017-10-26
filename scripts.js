@@ -22,11 +22,15 @@ function showPage(aStudentList, pageNumber) {
     var upperBound = (pageNumber * 10) - 1;
     var lowerBound = (pageNumber - 1) * 10;
     var selectionArray = [];
+
+    // add correct students to a new list
     for (var k = lowerBound; k <= upperBound; k++) {
         if (aStudentList[k]) {
             selectionArray.push(aStudentList[k]);
         }
     }
+
+    // use new list to display correct students
     for (var j = 0; j < selectionArray.length; j++) {
         selectionArray[j].style.display = "block";
         if (j === selectionArray.length - 1) {
@@ -40,7 +44,7 @@ function showPage(aStudentList, pageNumber) {
 function appendPageLinks(aStudentList) {
     var numberOfPages = Math.ceil(aStudentList.length / 10);
 
-    // page link section
+    // page link section - create pagination
     var pageLinkContainer = document.createElement('div');
     pageLinkContainer.className = 'pagination';
 
@@ -60,6 +64,7 @@ function appendPageLinks(aStudentList) {
         pageLinkListElement.appendChild(pageLinkAnchor);
         pageLinkContainer.appendChild(pageLinkListElement);
 
+        // add event listener to page links
         pageLinkAnchor.addEventListener('click', function() {
             showPage(aStudentList, this.innerHTML);
             removeActiveState();
@@ -75,13 +80,18 @@ function appendPageLinks(aStudentList) {
 
 // Search Function for searching through students to display
 function searchList(inputValue) {
+    // remove any unwanted items
     removeStudents();
     removePagination();
     removeActiveState();
     if (document.querySelector('.message')) {
         document.querySelector('.message').remove();
     }
+
+    // initialising list of matched search queries
     var matchedList = [];
+
+    // add matches to list
     for (var i = 0; i < studentList.length; i++) {
         var name = studentList[i].querySelector('h3').innerHTML;
         var email = studentList[i].querySelector('.email').innerHTML;
@@ -89,6 +99,8 @@ function searchList(inputValue) {
             matchedList.push(studentList[i]);
         }
     }
+
+    // if no matches, create and display message
     if (matchedList.length === 0) {
         var pageHeader = document.getElementById('page-header');
         var message = document.createElement('p');
@@ -102,9 +114,13 @@ function searchList(inputValue) {
         message.innerHTML = 'no students found';
         pageHeader.appendChild(message);
     }
+
+    // if more than 10 matches, add pagination and display correct students on each page
     if (matchedList.length > 10) {
         appendPageLinks(matchedList);
     }
+
+    // otherwise show students on one page with no pagination
     showPage(matchedList, 1);
 }
 
